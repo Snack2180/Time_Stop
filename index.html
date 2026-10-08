@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>TIME STOP</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+:root{
+  --bg:#000;
+  --fg:#fff;
+  --muted:#8f8f8f;
+  --line:#292929;
+  --panel:#0c0c0c;
+}
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  background:#000;
+  color:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Roboto,Arial,sans-serif;
+  overscroll-behavior:none;
+}
+body{
+  min-height:100vh;
+  min-height:100svh;
+  min-height:100dvh;
+}
+button{
+  font:inherit;
+  -webkit-appearance:none;
+  appearance:none;
+}
+button:active{transform:scale(.985)}
+
+.app{
+  width:100%;
+  max-width:540px;
+  min-height:100vh;
+  min-height:100svh;
+  min-height:100dvh;
+  margin:0 auto;
+  padding:
+    max(14px, env(safe-area-inset-top))
+    clamp(16px, 5vw, 24px)
+    max(16px, env(safe-area-inset-bottom));
+  display:flex;
+  flex-direction:column;
+}
+
+.topbar{
+  height:46px;
+  flex:0 0 46px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.brand{
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:.22em;
+}
+.text-btn{
+  border:0;
+  padding:10px 0;
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.08em;
+}
+
+.screen{
+  display:none !important;
+  flex:1;
+  min-height:0;
+}
+.screen.active{
+  display:flex !important;
+  flex-direction:column;
+}
+
+#menu{
+  padding-top:clamp(28px,7vh,70px);
+}
+.menu-main{
+  flex:1;
+}
+.eyebrow,.label{
+  margin:0 0 10px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.16em;
+}
+h1{
+  margin:0;
+  max-width:390px;
+  font-size:clamp(34px,9.5vw,54px);
+  line-height:1.06;
+  letter-spacing:-.055em;
+  word-break:keep-all;
+}
+.desc{
+  margin:17px 0 0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.55;
+  word-break:keep-all;
+}
+
+.difficulty-box{
+  margin-top:clamp(30px,7vh,56px);
+  display:grid;
+  gap:10px;
+}
+.diff{
+  width:100%;
+  min-height:64px;
+  padding:0 18px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--panel);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.diff span{
+  font-size:15px;
+  font-weight:850;
+}
+.diff strong{
+  font-size:18px;
+  font-weight:850;
+  font-variant-numeric:tabular-nums;
+}
+.diff.selected{
+  background:#fff;
+  color:#000;
+  border-color:#fff;
+}
+
+.bottom{
+  flex:0 0 auto;
+  padding-top:16px;
+}
+.primary,.secondary,.action{
+  width:100%;
+  border-radius:16px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+.primary{
+  min-height:62px;
+  border:1px solid #fff;
+  background:#fff;
+  color:#000;
+}
+.secondary{
+  min-height:58px;
+  border:1px solid var(--line);
+  background:transparent;
+  color:#fff;
+}
+
+#game{
+  padding-top:4px;
+}
+.game-head{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.badge{
+  padding:7px 11px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:#fff;
+  font-size:11px;
+  font-weight:850;
+}
+.target{
+  margin-top:clamp(28px,7vh,68px);
+  text-align:center;
+}
+.target-num{
+  font-size:clamp(64px,19vw,106px);
+  line-height:.94;
+  font-weight:950;
+  letter-spacing:-.06em;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+.sec{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.22em;
+}
+.timer-area{
+  flex:1;
+  min-height:150px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.timer{
+  font-size:clamp(50px,16vw,84px);
+  line-height:1;
+  font-weight:300;
+  letter-spacing:-.045em;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+.state{
+  margin-top:14px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.18em;
+}
+.action{
+  min-height:82px;
+  border:2px solid #fff;
+  background:#fff;
+  color:#000;
+  font-size:21px;
+}
+.action.running{
+  background:#000;
+  color:#fff;
+}
+
+#result{
+  justify-content:center;
+  gap:clamp(26px,5vh,44px);
+  padding-top:20px;
+}
+.result-title{
+  text-align:center;
+}
+.result-title h2{
+  margin:0;
+  font-size:clamp(48px,15vw,80px);
+  line-height:1;
+  letter-spacing:-.05em;
+}
+.result-card{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+}
+.metric{
+  min-width:0;
+  padding:20px 17px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.metric:first-child{
+  border-right:1px solid var(--line);
+}
+.metric.full{
+  grid-column:1/-1;
+  border-top:1px solid var(--line);
+  text-align:center;
+}
+.metric span{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+}
+.metric strong{
+  font-size:clamp(20px,6vw,26px);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+.metric.full strong{
+  font-size:clamp(32px,9vw,42px);
+}
+.result-buttons{
+  display:grid;
+  gap:9px;
+}
+
+@media (orientation:landscape) and (max-height:650px){
+  .app{
+    max-width:900px;
+    padding-top:max(8px, env(safe-area-inset-top));
+    padding-bottom:max(8px, env(safe-area-inset-bottom));
+  }
+  .topbar{
+    height:36px;
+    flex-basis:36px;
+  }
+  #menu{
+    padding-top:10px;
+  }
+  h1{
+    font-size:32px;
+  }
+  .desc{
+    margin-top:10px;
+  }
+  .difficulty-box{
+    margin-top:18px;
+    grid-template-columns:repeat(3,1fr);
+  }
+  .diff{
+    min-height:54px;
+    padding:0 14px;
+  }
+  .primary{
+    min-height:52px;
+  }
+  .target{
+    margin-top:8px;
+  }
+  .target-num{
+    font-size:58px;
+  }
+  .timer-area{
+    min-height:75px;
+  }
+  .timer{
+    font-size:46px;
+  }
+  .action{
+    min-height:58px;
+  }
+  #result{
+    padding-top:8px;
+    gap:14px;
+  }
+  .result-title h2{
+    font-size:48px;
+  }
+  .metric{
+    padding:12px 15px;
+  }
+}
+
+@media (max-width:360px){
+  .app{
+    padding-left:13px;
+    padding-right:13px;
+  }
+  h1{font-size:31px}
+  .target-num{font-size:56px}
+  .timer{font-size:46px}
+}
+</style>
+
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TIME STOP">
+</head>
+
+<body>
+<main class="app">
+  <header class="topbar">
+    <div class="brand">TIME STOP</div>
+    <button id="sound" class="text-btn" type="button">SOUND ON</button>
+  </header>
+
+  <section id="menu" class="screen active">
+    <div class="menu-main">
+      <p class="eyebrow">STOPWATCH GAME</p>
+      <h1>정확한 순간에<br>시간을 멈추세요.</h1>
+      <p class="desc">목표 시간과 최대한 가깝게 멈추는 게임입니다.</p>
+
+      <div class="difficulty-box">
+        <p class="label" style="grid-column:1/-1">DIFFICULTY</p>
+
+        <button class="diff selected" data-level="easy" type="button">
+          <span>쉬움</span><strong>0.0초</strong>
+        </button>
+
+        <button class="diff" data-level="normal" type="button">
+          <span>보통</span><strong>0.00초</strong>
+        </button>
+
+        <button class="diff" data-level="hard" type="button">
+          <span>어려움</span><strong>00.000초</strong>
+        </button>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <button id="gameStart" class="primary" type="button">GAME START</button>
+    </div>
+  </section>
+
+  <section id="game" class="screen">
+    <div class="game-head">
+      <button id="back" class="text-btn" type="button">← BACK</button>
+      <div id="badge" class="badge">쉬움</div>
+    </div>
+
+    <div class="target">
+      <p class="label">TARGET TIME</p>
+      <div id="targetNum" class="target-num">3.7</div>
+      <div class="sec">SEC</div>
+    </div>
+
+    <div class="timer-area">
+      <div id="timer" class="timer">0.0</div>
+      <div id="state" class="state">READY</div>
+    </div>
+
+    <div class="bottom">
+      <button id="action" class="action" type="button">START</button>
+    </div>
+  </section>
+
+  <section id="result" class="screen">
+    <div class="result-title">
+      <p class="label">RESULT</p>
+      <h2 id="judge">GOOD</h2>
+    </div>
+
+    <div class="result-card">
+      <div class="metric">
+        <span>목표</span>
+        <strong id="rTarget">3.7초</strong>
+      </div>
+      <div class="metric">
+        <span>기록</span>
+        <strong id="rActual">3.8초</strong>
+      </div>
+      <div class="metric full">
+        <span>오차</span>
+        <strong id="rError">+0.1초</strong>
+      </div>
+    </div>
+
+    <div class="result-buttons">
+      <button id="retry" class="primary" type="button">RETRY</button>
+      <button id="difficulty" class="secondary" type="button">DIFFICULTY</button>
+    </div>
+  </section>
+</main>
+
+<script>
+(function(){
+  const levels={
+    easy:{name:"쉬움",decimals:1,min:10,max:99,div:10},
+    normal:{name:"보통",decimals:2,min:100,max:999,div:100},
+    hard:{name:"어려움",decimals:3,min:10000,max:30000,div:1000}
+  };
+
+  let level="easy";
+  let target=0;
+  let startTime=0;
+  let raf=0;
+  let running=false;
+  let soundOn=true;
+
+  const $=id=>document.getElementById(id);
+  const screens=[$("menu"),$("game"),$("result")];
+
+  function show(id){
+    screens.forEach(s=>s.classList.remove("active"));
+    $(id).classList.add("active");
+    try{window.scrollTo(0,0)}catch(e){}
+  }
+
+  function rand(min,max){
+    return Math.floor(Math.random()*(max-min+1))+min;
+  }
+
+  function setup(){
+    const c=levels[level];
+    target=rand(c.min,c.max)/c.div;
+    $("badge").textContent=c.name;
+    $("targetNum").textContent=target.toFixed(c.decimals);
+    $("timer").textContent=(0).toFixed(c.decimals);
+    $("state").textContent="READY";
+    $("action").textContent="START";
+    $("action").classList.remove("running");
+    running=false;
+  }
+
+  function tick(now){
+    if(!running)return;
+    const c=levels[level];
+    const elapsed=(now-startTime)/1000;
+    $("timer").textContent=elapsed.toFixed(c.decimals);
+    raf=requestAnimationFrame(tick);
+  }
+
+  function start(){
+    if(running)return;
+    running=true;
+    startTime=performance.now();
+    $("state").textContent="NOW";
+    $("action").textContent="STOP";
+    $("action").classList.add("running");
+    raf=requestAnimationFrame(tick);
+  }
+
+  function stop(){
+    if(!running){
+      start();
+      return;
+    }
+    const end=performance.now();
+    running=false;
+    cancelAnimationFrame(raf);
+    const elapsed=(end-startTime)/1000;
+    finish(elapsed);
+  }
+
+  function judgement(error,decimals){
+    const perfect=0.5*Math.pow(10,-decimals);
+    if(error<perfect)return "PERFECT";
+
+    if(decimals===1){
+      if(error<=0.1)return "EXCELLENT";
+      if(error<=0.3)return "GREAT";
+      if(error<=0.7)return "GOOD";
+      return "MISS";
+    }
+    if(decimals===2){
+      if(error<=0.03)return "EXCELLENT";
+      if(error<=0.08)return "GREAT";
+      if(error<=0.20)return "GOOD";
+      return "MISS";
+    }
+    if(error<=0.010)return "EXCELLENT";
+    if(error<=0.030)return "GREAT";
+    if(error<=0.080)return "GOOD";
+    return "MISS";
+  }
+
+  function finish(elapsed){
+    const c=levels[level];
+    const delta=elapsed-target;
+    const error=Math.abs(delta);
+
+    $("judge").textContent=judgement(error,c.decimals);
+    $("rTarget").textContent=target.toFixed(c.decimals)+"초";
+    $("rActual").textContent=elapsed.toFixed(c.decimals)+"초";
+    $("rError").textContent=(delta>0?"+":delta<0?"−":"±")+error.toFixed(c.decimals)+"초";
+
+    try{
+      if("vibrate" in navigator) navigator.vibrate(error<0.01?[35,30,60]:40);
+    }catch(e){}
+
+    tone(error);
+    show("result");
+  }
+
+  function tone(error){
+    if(!soundOn)return;
+    try{
+      const AC=window.AudioContext||window.webkitAudioContext;
+      if(!AC)return;
+      const ctx=new AC();
+      const o=ctx.createOscillator();
+      const g=ctx.createGain();
+      o.frequency.value=error<0.01?880:error<0.1?660:320;
+      g.gain.value=.035;
+      o.connect(g);g.connect(ctx.destination);
+      o.start();o.stop(ctx.currentTime+.11);
+    }catch(e){}
+  }
+
+  document.querySelectorAll(".diff").forEach(btn=>{
+    btn.addEventListener("click",function(){
+      document.querySelectorAll(".diff").forEach(b=>b.classList.remove("selected"));
+      this.classList.add("selected");
+      level=this.dataset.level;
+    });
+  });
+
+  $("gameStart").addEventListener("click",()=>{
+    setup();
+    show("game");
+  });
+
+  $("back").addEventListener("click",()=>{
+    running=false;
+    cancelAnimationFrame(raf);
+    show("menu");
+  });
+
+  $("action").addEventListener("click",stop);
+
+  $("retry").addEventListener("click",()=>{
+    setup();
+    show("game");
+  });
+
+  $("difficulty").addEventListener("click",()=>show("menu"));
+
+  $("sound").addEventListener("click",()=>{
+    soundOn=!soundOn;
+    $("sound").textContent=soundOn?"SOUND ON":"SOUND OFF";
+  });
+})();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

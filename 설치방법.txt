@@ -1,0 +1,19 @@
+TIME STOP PWA 설치 방법
+
+이 버전은 홈 화면에 설치해서 앱처럼 여는 웹앱 버전입니다.
+
+중요
+- 파일 앱에서 index.html을 직접 여는 방식은 사용하지 마세요.
+- PWA 설치는 최초 1회 HTTPS 주소로 접속해야 합니다.
+- 한 번 설치한 뒤에는 홈 화면 아이콘으로 실행할 수 있고, 캐시된 상태에서는 오프라인에서도 실행됩니다.
+
+iPhone / iPad
+1. 폴더 전체를 GitHub Pages / Netlify / Cloudflare Pages 같은 정적 호스팅에 올립니다.
+2. 생성된 HTTPS 주소를 Safari로 엽니다.
+3. 공유 버튼 → 홈 화면에 추가 → 추가
+4. 이후 홈 화면의 TIME STOP 아이콘으로 실행합니다.
+
+Android
+1. 같은 HTTPS 주소를 Chrome으로 엽니다.
+2. 메뉴(⋮) → 앱 설치 또는 홈 화면에 추가
+3. 이후 TIME STOP 아이콘으로 실행합니다.
