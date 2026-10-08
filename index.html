@@ -1,481 +1,484 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#000000">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="TIME STOP">
-<meta name="format-detection" content="telephone=no">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-192.png">
-<title>TIME STOP</title>
-
-<style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#000;--fg:#fff;--muted:#8c8c8c;--line:#292929;--panel:#0d0d0d;--panel2:#151515}
-html,body{margin:0;width:100%;min-height:100%;background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Roboto,Arial,sans-serif;overscroll-behavior:none}
-body{min-height:100vh;min-height:100svh;min-height:100dvh}
-button{font:inherit;-webkit-appearance:none;appearance:none;touch-action:manipulation}
-button:active{transform:scale(.985)}
-.app{width:100%;max-width:560px;min-height:100vh;min-height:100svh;min-height:100dvh;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) clamp(16px,5vw,24px) max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column}
-.topbar{height:46px;flex:0 0 46px;display:flex;align-items:center;justify-content:space-between}
-.brand{font-size:13px;font-weight:900;letter-spacing:.22em}
-.top-actions{display:flex;gap:14px;align-items:center}
-.text-btn{border:0;padding:10px 0;background:transparent;color:var(--muted);font-size:11px;font-weight:850;letter-spacing:.08em}
-.screen{display:none!important;flex:1;min-height:0}
-.screen.active{display:flex!important;flex-direction:column}
-.eyebrow,.label{margin:0 0 10px;color:var(--muted);font-size:11px;font-weight:900;letter-spacing:.16em}
-h1{margin:0;max-width:390px;font-size:clamp(34px,9.5vw,54px);line-height:1.06;letter-spacing:-.055em;word-break:keep-all}
-.desc{margin:17px 0 0;color:var(--muted);font-size:14px;line-height:1.55;word-break:keep-all}
-.bottom{flex:0 0 auto;padding-top:16px}
-.primary,.secondary,.action{width:100%;border-radius:16px;font-weight:900;letter-spacing:.08em}
-.primary{min-height:62px;border:1px solid #fff;background:#fff;color:#000}
-.secondary{min-height:58px;border:1px solid var(--line);background:transparent;color:#fff}
-.nav-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}
-.nav-btn{min-height:52px;border:1px solid var(--line);border-radius:14px;background:var(--panel);color:#fff;font-size:12px;font-weight:850;letter-spacing:.05em}
-
-#menu{padding-top:clamp(28px,7vh,70px)}
-.menu-main{flex:1}
-.difficulty-box{margin-top:clamp(30px,7vh,56px);display:grid;gap:10px}
-.diff{width:100%;min-height:64px;padding:0 18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:#fff;display:flex;align-items:center;justify-content:space-between}
-.diff span{font-size:15px;font-weight:850}.diff strong{font-size:18px;font-weight:850;font-variant-numeric:tabular-nums}
-.diff.selected{background:#fff;color:#000;border-color:#fff}
-
-#game{padding-top:4px}
-.game-head{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between}
-.badge{padding:7px 11px;border:1px solid var(--line);border-radius:999px;color:#fff;font-size:11px;font-weight:850}
-.target{margin-top:clamp(28px,7vh,62px);text-align:center}
-.target-num{font-size:clamp(64px,19vw,106px);line-height:.94;font-weight:950;letter-spacing:-.06em;font-variant-numeric:tabular-nums;white-space:nowrap}
-.sec{margin-top:10px;color:var(--muted);font-size:11px;font-weight:850;letter-spacing:.22em}
-.timer-area{flex:1;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.timer{font-size:clamp(50px,16vw,84px);line-height:1;font-weight:300;letter-spacing:-.045em;font-variant-numeric:tabular-nums;white-space:nowrap}
-.state{margin-top:14px;color:var(--muted);font-size:11px;font-weight:850;letter-spacing:.18em;text-align:center}
-.action{min-height:82px;border:2px solid #fff;background:#fff;color:#000;font-size:21px}.action.running{background:#000;color:#fff}
-
-#result{justify-content:center;gap:clamp(24px,5vh,42px);padding-top:20px}
-.result-title{text-align:center}.result-title h2{margin:0;font-size:clamp(48px,15vw,80px);line-height:1;letter-spacing:-.05em}
-.result-card{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:16px;overflow:hidden}
-.metric{min-width:0;padding:20px 17px;display:flex;flex-direction:column;gap:8px}.metric:first-child{border-right:1px solid var(--line)}
-.metric.full{grid-column:1/-1;border-top:1px solid var(--line);text-align:center}
-.metric span{color:var(--muted);font-size:11px;font-weight:800}.metric strong{font-size:clamp(20px,6vw,26px);font-variant-numeric:tabular-nums;white-space:nowrap}.metric.full strong{font-size:clamp(32px,9vw,42px)}
-.result-buttons{display:grid;gap:9px}
-
-.page-head{display:flex;justify-content:space-between;align-items:end;margin:24px 0 18px}
-.page-head h2{margin:0;font-size:30px;letter-spacing:-.04em}
-.page-head small{color:var(--muted);font-size:11px}
-.list{display:grid;gap:9px;padding-bottom:14px}
-.record-card{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:15px;background:var(--panel);padding:14px}
-.rank{width:28px;color:var(--muted);font-size:12px;font-weight:900}
-.record-main{min-width:0}.record-main strong{display:block;font-size:17px}.record-main small{display:block;margin-top:4px;color:var(--muted);font-size:11px}
-.error{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
-.empty{border:1px dashed var(--line);border-radius:16px;padding:28px 18px;text-align:center;color:var(--muted);font-size:13px;line-height:1.6}
-.clear-btn{border:0;background:transparent;color:var(--muted);font-size:11px;text-decoration:underline}
-
-.achievement-grid{display:grid;gap:10px}
-.achievement{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:17px;display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center}
-.achievement.locked{opacity:.48}
-.achievement-icon{width:42px;height:42px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900}
-.achievement h3{margin:0 0 5px;font-size:15px}.achievement p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}.achievement-state{font-size:11px;font-weight:900}
-.notice{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:13px 14px;color:var(--muted);font-size:11px;line-height:1.55}
-
-@media(max-width:360px){
-.app{padding-left:13px;padding-right:13px}h1{font-size:31px}.target-num{font-size:56px}.timer{font-size:46px}
-.record-card{grid-template-columns:24px 1fr}.error{grid-column:2;font-size:18px}
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TIME STOP">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <title>TIME STOP</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root { color-scheme: dark; --bg:#000; --ink:#fff; --sub:#929292; --border:#2c2c2c; --surface:#111; }
+    html { min-height:100%; background:var(--bg); }
+    body { margin:0; min-height:100vh; min-height:100svh; min-height:100dvh; color:var(--ink); background:var(--bg); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif; }
+    button { font:inherit; cursor:pointer; touch-action:manipulation; -webkit-appearance:none; appearance:none; }
+    button:focus-visible { outline:2px solid var(--ink); outline-offset:3px; }
+    button:active { opacity:.79; }
+    .app { width:100%; max-width:560px; margin:0 auto; min-height:100vh; min-height:100svh; min-height:100dvh; padding: max(12px,env(safe-area-inset-top)) clamp(16px,5vw,25px) max(14px,env(safe-area-inset-bottom)); display:flex; flex-direction:column; }
+    .topbar { flex:0 0 49px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .brand { padding:10px 0; border:0; background:transparent; color:var(--ink); font-size:14px; font-weight:900; letter-spacing:.17em; white-space:nowrap; }
+    .toplinks { display:flex; align-items:center; gap:14px; }
+    .toplinks button, .back { border:0; background:transparent; color:var(--sub); font-size:11px; font-weight:800; letter-spacing:.07em; padding:12px 0; }
+    .screen { display:none !important; flex:1 1 auto; min-height:0; }
+    .screen.active { display:flex !important; flex-direction:column; }
+    .kicker { margin:0 0 11px; color:var(--sub); letter-spacing:.16em; font-size:11px; font-weight:900; }
+    .muted { color:var(--sub); }
+    .large-btn { min-height:62px; width:100%; background:var(--ink); color:#000; border:1px solid var(--ink); border-radius:15px; font-weight:900; font-size:15px; letter-spacing:.09em; }
+    .outline-btn { min-height:56px; width:100%; color:var(--ink); border:1px solid var(--border); background:transparent; border-radius:15px; font-weight:800; font-size:13px; letter-spacing:.04em; }
+    .bottom-actions { margin-top:auto; padding-top:18px; flex:0 0 auto; }
+    .two-buttons { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+    .two-buttons button { min-height:52px; }
+    #menu { padding-top:clamp(20px,5.5vh,57px); }
+    .menu-body { flex:1 1 auto; }
+    h1 { margin:0; font-size:clamp(34px,9vw,52px); line-height:1.11; letter-spacing:-.057em; word-break:keep-all; }
+    .description { margin:16px 0 0; font-size:13px; line-height:1.65; color:var(--sub); word-break:keep-all; }
+    .streak-overview { margin-top:clamp(21px,4vh,33px); display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border); padding:14px 15px; border-radius:14px; }
+    .streak-overview .caption { color:var(--sub); font-size:12px; }
+    .streak-overview strong { font-size:19px; font-variant-numeric:tabular-nums; }
+    .difficulty-set { margin-top:clamp(23px,4vh,42px); display:grid; gap:9px; }
+    .difficulty { display:flex; align-items:center; justify-content:space-between; min-height:60px; padding:0 17px; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-radius:14px; }
+    .difficulty.selected { background:var(--ink); color:#000; border-color:var(--ink); }
+    .difficulty span { font-size:15px; font-weight:850; }
+    .difficulty strong { font-size:18px; font-weight:900; font-variant-numeric:tabular-nums; }
+    .rules-hint { margin:12px 0 0; color:var(--sub); font-size:11px; line-height:1.5; }
+    .game-navigation { display:flex; align-items:center; justify-content:space-between; margin-top:4px; }
+    .pill { font-size:11px; font-weight:800; padding:8px 13px; border:1px solid var(--border); border-radius:99px; }
+    .game-streak { margin-top:10px; text-align:center; color:var(--sub); font-size:12px; font-weight:750; }
+    .game-streak strong { color:var(--ink); }
+    .target { margin-top:clamp(22px,5vh,50px); text-align:center; }
+    .target-value { font-size:clamp(62px,18vw,105px); font-weight:950; line-height:1; letter-spacing:-.065em; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .unit { margin-top:9px; font-size:11px; color:var(--sub); letter-spacing:.20em; font-weight:900; }
+    .timer-area { flex:1; min-height:115px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .timer-number { font-size:clamp(48px,15vw,80px); font-variant-numeric:tabular-nums; font-weight:300; white-space:nowrap; letter-spacing:-.04em; }
+    .timer-message { color:var(--sub); font-size:11px; letter-spacing:.1em; margin-top:9px; font-weight:800; text-align:center; }
+    .main-action { min-height:clamp(66px,12vh,84px); font-size:22px; border:2px solid var(--ink); border-radius:16px; background:var(--ink); color:#000; font-weight:900; width:100%; }
+    .main-action.running { background:#000; color:var(--ink); }
+    #result { justify-content:center; gap:clamp(20px,3.8vh,35px); padding-top:16px; }
+    .result-heading { text-align:center; }
+    .result-heading h2 { font-size:clamp(48px,14vw,78px); letter-spacing:-.052em; margin:0; line-height:1; }
+    .results-table { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); border:1px solid var(--border); border-radius:15px; overflow:hidden; }
+    .metric { display:flex; flex-direction:column; min-width:0; padding:17px; gap:8px; }
+    .metric:first-child { border-right:1px solid var(--border); }
+    .metric.wide { grid-column:1/-1; border-top:1px solid var(--border); text-align:center; }
+    .metric small { font-size:11px; font-weight:700; color:var(--sub); }
+    .metric strong { font-size:clamp(19px,5.4vw,25px); font-weight:900; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .metric.wide strong { font-size:clamp(29px,9vw,42px); }
+    .result-streak { border:1px solid var(--border); border-radius:14px; padding:14px 16px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .result-streak span { color:var(--sub); font-size:12px; }
+    .result-streak strong { font-size:19px; font-variant-numeric:tabular-nums; }
+    .unlock-message { padding:12px 15px; border:1px solid #777; border-radius:14px; font-size:12px; line-height:1.6; }
+    .result-buttons { display:grid; gap:9px; }
+    .page-head { padding-top:14px; margin-bottom:18px; }
+    .page-head h2 { margin:8px 0 0; font-size:30px; letter-spacing:-.04em; }
+    .page-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .page-note { color:var(--sub); font-size:11px; line-height:1.55; margin:10px 0 0; }
+    .filter-row { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin:2px 0 16px; }
+    .filter { min-width:0; min-height:44px; border:1px solid var(--border); border-radius:11px; color:var(--ink); background:var(--surface); font-size:12px; font-weight:850; }
+    .filter.selected { background:var(--ink); color:#000; border-color:var(--ink); }
+    .record-list { display:grid; gap:9px; padding-bottom:20px; }
+    .record { display:grid; grid-template-columns:24px minmax(0,1fr) auto; gap:9px; align-items:center; padding:15px 12px; border:1px solid var(--border); border-radius:14px; background:var(--surface); }
+    .rank { font-size:12px; color:var(--sub); font-weight:900; }
+    .record-main { min-width:0; }
+    .record-main strong { display:block; font-size:15px; font-weight:850; line-height:1.25; }
+    .record-main small { display:block; color:var(--sub); margin-top:5px; font-size:11px; line-height:1.3; }
+    .record-error { white-space:nowrap; font-weight:900; font-size:clamp(14px,4vw,18px); font-variant-numeric:tabular-nums; }
+    .empty { border:1px dashed var(--border); border-radius:14px; padding:30px 15px; text-align:center; color:var(--sub); font-size:12px; line-height:1.7; }
+    .tiny-link { background:transparent; color:var(--sub); border:0; padding:12px 0; font-size:11px; text-decoration:underline; }
+    .achievement-summary { margin-top:2px; margin-bottom:15px; color:var(--sub); font-size:12px; }
+    .achievement-list { display:grid; gap:10px; padding-bottom:20px; }
+    .achievement { display:grid; grid-template-columns:42px minmax(0,1fr) auto; align-items:center; gap:13px; border:1px solid var(--border); border-radius:14px; background:var(--surface); padding:14px; }
+    .achievement.locked { opacity:.55; }
+    .ach-icon { width:42px; height:42px; display:flex; align-items:center; justify-content:center; border-radius:50%; border:1px solid #646464; font-size:13px; font-weight:950; }
+    .ach-text strong { display:block; font-size:14px; margin-bottom:5px; }
+    .ach-text small { display:block; font-size:11px; color:var(--sub); line-height:1.5; word-break:keep-all; }
+    .ach-status { font-size:10px; font-weight:900; letter-spacing:.05em; }
+    .section-back { margin-top:auto; padding-top:15px; padding-bottom:2px; }
+    .scroll-page { overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+    @media(max-width:360px) { .app{padding-left:13px;padding-right:13px} h1{font-size:31px} .target-value{font-size:57px} .timer-number{font-size:46px} .record{grid-template-columns:24px 1fr}.record-error{grid-column:2} .toplinks{gap:9px} }
+    @media(max-height:710px) { #menu{padding-top:10px}.description{margin-top:8px}.streak-overview{margin-top:13px;padding:10px 12px}.difficulty-set{margin-top:15px;gap:7px}.difficulty{min-height:51px} .rules-hint{margin-top:7px}.target{margin-top:13px}.target-value{font-size:clamp(54px,16vw,75px)}.timer-number{font-size:clamp(42px,13vw,66px)}.main-action{min-height:61px}#result{gap:13px}.metric{padding:11px 13px}.result-streak{padding:10px 13px} }
+    @media(orientation:landscape) and (max-height:600px) { .app{max-width:850px}.topbar{flex-basis:35px}#menu{padding-top:8px}h1{font-size:30px}.streak-overview{margin-top:8px}.difficulty-set{grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.difficulty-set .kicker{grid-column:1/-1}.difficulty{min-height:45px;padding:0 10px}.target{margin-top:6px}.timer-area{min-height:65px}.main-action{min-height:49px} .bottom-actions{padding-top:8px}.large-btn{min-height:47px}.two-buttons button{min-height:40px} }
+  </style>
 </head>
-
 <body>
-<main class="app">
-<header class="topbar">
-  <div class="brand">TIME STOP</div>
-  <div class="top-actions">
-    <button id="recordsTop" class="text-btn" type="button">RECORDS</button>
-    <button id="achievementsTop" class="text-btn" type="button">ACHIEVEMENTS</button>
-  </div>
-</header>
-
-<section id="menu" class="screen active">
-  <div class="menu-main">
-    <p class="eyebrow">STOPWATCH GAME</p>
-    <h1>정확한 순간에<br>시간을 멈추세요.</h1>
-    <p class="desc">목표 시간은 항상 10초 미만에서 무작위로 생성됩니다.</p>
-
-    <div class="difficulty-box">
-      <p class="label">DIFFICULTY</p>
-      <button class="diff selected" data-level="easy" type="button"><span>쉬움</span><strong>0.0초</strong></button>
-      <button class="diff" data-level="normal" type="button"><span>보통</span><strong>0.00초</strong></button>
-      <button class="diff" data-level="hard" type="button"><span>어려움</span><strong>0.000초</strong></button>
-    </div>
-  </div>
-
-  <div class="bottom">
-    <button id="gameStart" class="primary" type="button">GAME START</button>
-    <div class="nav-grid">
-      <button id="recordsBtn" class="nav-btn" type="button">MY RECORDS</button>
-      <button id="achievementsBtn" class="nav-btn" type="button">ACHIEVEMENTS</button>
-    </div>
-  </div>
-</section>
-
-<section id="game" class="screen">
-  <div class="game-head">
-    <button id="back" class="text-btn" type="button">← BACK</button>
-    <div id="badge" class="badge">쉬움</div>
-  </div>
-
-  <div class="target">
-    <p class="label">TARGET TIME</p>
-    <div id="targetNum" class="target-num">3.7</div>
-    <div class="sec">SEC</div>
-  </div>
-
-  <div class="timer-area">
-    <div id="timer" class="timer">0.0</div>
-    <div id="state" class="state">READY</div>
-  </div>
-
-  <div class="bottom">
-    <button id="action" class="action" type="button">START</button>
-  </div>
-</section>
-
-<section id="result" class="screen">
-  <div class="result-title">
-    <p class="label">RESULT</p>
-    <h2 id="judge">GOOD</h2>
-  </div>
-
-  <div class="result-card">
-    <div class="metric"><span>목표</span><strong id="rTarget">3.7초</strong></div>
-    <div class="metric"><span>기록</span><strong id="rActual">3.8초</strong></div>
-    <div class="metric full"><span>오차</span><strong id="rError">+0.1초</strong></div>
-  </div>
-
-  <div class="result-buttons">
-    <button id="retry" class="primary" type="button">RETRY</button>
-    <button id="difficulty" class="secondary" type="button">DIFFICULTY</button>
-  </div>
-</section>
-
-<section id="records" class="screen">
-  <div class="page-head">
-    <div>
-      <p class="label">PERSONAL BEST</p>
-      <h2>내 기록</h2>
-    </div>
-    <button id="clearRecords" class="clear-btn" type="button">전체 삭제</button>
-  </div>
-  <div id="recordList" class="list"></div>
-</section>
-
-<section id="achievements" class="screen">
-  <div class="page-head">
-    <div>
-      <p class="label">ACHIEVEMENTS</p>
-      <h2>업적</h2>
-    </div>
-    <small id="achievementCount">0 / 2</small>
-  </div>
-
-  <div class="achievement-grid">
-    <div id="achRepeat" class="achievement locked">
-      <div class="achievement-icon">777</div>
-      <div>
-        <h3>같은 숫자</h3>
-        <p>무작위 목표가 7.77처럼 같은 숫자 3개 이상을 포함한 라운드를 완료하세요.</p>
+  <main class="app">
+    <header class="topbar">
+      <button class="brand" type="button" id="homeBrand" aria-label="TIME STOP 메인 화면으로 돌아가기">TIME STOP</button>
+      <div class="toplinks">
+        <button id="topRecords" type="button">기록</button>
+        <button id="topAchievements" type="button">업적</button>
       </div>
-      <div class="achievement-state">LOCKED</div>
-    </div>
+    </header>
 
-    <div id="achSequence" class="achievement locked">
-      <div class="achievement-icon">123</div>
-      <div>
-        <h3>순서대로</h3>
-        <p>무작위 목표가 1.23처럼 연속된 숫자 3개 이상을 포함한 라운드를 완료하세요.</p>
-      </div>
-      <div class="achievement-state">LOCKED</div>
-    </div>
-  </div>
-
-  <div class="notice">
-    업적용 목표도 별도로 만들어지지 않습니다. 모든 목표는 일반 게임과 동일하게 완전 무작위로 생성되며, 해당 패턴이 우연히 나온 라운드를 완료하면 해금됩니다.
-  </div>
-</section>
-</main>
-
-<script>
-(function(){
-  const levels={
-    easy:{name:"쉬움",decimals:1,min:10,max:99,div:10,weight:1},
-    normal:{name:"보통",decimals:2,min:100,max:999,div:100,weight:2},
-    hard:{name:"어려움",decimals:3,min:1000,max:9999,div:1000,weight:3}
-  };
-
-  const STORAGE_RECORDS="timeStopRecordsV2";
-  const STORAGE_ACH="timeStopAchievementsV2";
-
-  let level="easy";
-  let target=0;
-  let startTime=0;
-  let raf=0;
-  let running=false;
-  let autoStopAt=10;
-  let currentTargetText="";
-
-  const $=id=>document.getElementById(id);
-  const screens=["menu","game","result","records","achievements"].map($);
-
-  function show(id){
-    running=false;
-    cancelAnimationFrame(raf);
-    screens.forEach(s=>s.classList.remove("active"));
-    $(id).classList.add("active");
-    if(id==="records") renderRecords();
-    if(id==="achievements") renderAchievements();
-    window.scrollTo(0,0);
-  }
-
-  function rand(min,max){
-    return Math.floor(Math.random()*(max-min+1))+min;
-  }
-
-  function setup(){
-    const c=levels[level];
-    target=rand(c.min,c.max)/c.div;
-    currentTargetText=target.toFixed(c.decimals);
-
-    // 다음 10초 단위로 올림. 현재 목표는 항상 10초 미만이므로 10초에서 자동 종료.
-    autoStopAt=Math.ceil(target/10)*10;
-    if(autoStopAt<10) autoStopAt=10;
-
-    $("badge").textContent=c.name;
-    $("targetNum").textContent=currentTargetText;
-    $("timer").textContent=(0).toFixed(c.decimals);
-    $("state").textContent="READY · "+autoStopAt.toFixed(0)+"초 자동 마감";
-    $("action").textContent="START";
-    $("action").classList.remove("running");
-    running=false;
-  }
-
-  function tick(now){
-    if(!running)return;
-    const c=levels[level];
-    const elapsed=(now-startTime)/1000;
-
-    if(elapsed>=autoStopAt){
-      running=false;
-      cancelAnimationFrame(raf);
-      $("timer").textContent=autoStopAt.toFixed(c.decimals);
-      finish(autoStopAt,true);
-      return;
-    }
-
-    $("timer").textContent=elapsed.toFixed(c.decimals);
-    raf=requestAnimationFrame(tick);
-  }
-
-  function start(){
-    if(running)return;
-    running=true;
-    startTime=performance.now();
-    $("state").textContent="NOW · "+autoStopAt.toFixed(0)+"초에서 자동 종료";
-    $("action").textContent="STOP";
-    $("action").classList.add("running");
-    raf=requestAnimationFrame(tick);
-  }
-
-  function stop(){
-    if(!running){
-      start();
-      return;
-    }
-    const end=performance.now();
-    running=false;
-    cancelAnimationFrame(raf);
-    finish((end-startTime)/1000,false);
-  }
-
-  function judgement(error,d){
-    const perfect=.5*Math.pow(10,-d);
-    if(error<perfect)return"PERFECT";
-    if(d===1){
-      if(error<=.1)return"EXCELLENT";
-      if(error<=.3)return"GREAT";
-      if(error<=.7)return"GOOD";
-      return"MISS";
-    }
-    if(d===2){
-      if(error<=.03)return"EXCELLENT";
-      if(error<=.08)return"GREAT";
-      if(error<=.2)return"GOOD";
-      return"MISS";
-    }
-    if(error<=.01)return"EXCELLENT";
-    if(error<=.03)return"GREAT";
-    if(error<=.08)return"GOOD";
-    return"MISS";
-  }
-
-  function finish(elapsed,autoStopped){
-    const c=levels[level];
-    const delta=elapsed-target;
-    const error=Math.abs(delta);
-
-    $("judge").textContent=autoStopped ? "TIME OUT" : judgement(error,c.decimals);
-    $("rTarget").textContent=target.toFixed(c.decimals)+"초";
-    $("rActual").textContent=elapsed.toFixed(c.decimals)+"초";
-    $("rError").textContent=(delta>0?"+":delta<0?"−":"±")+error.toFixed(c.decimals)+"초";
-
-    saveRecord({
-      level,
-      levelName:c.name,
-      decimals:c.decimals,
-      difficultyWeight:c.weight,
-      target,
-      actual:elapsed,
-      error:delta,
-      absError:error,
-      autoStopped,
-      createdAt:Date.now()
-    });
-
-    checkAchievements(currentTargetText);
-
-    try{
-      if("vibrate" in navigator) navigator.vibrate(error<.01?[35,30,60]:40);
-    }catch(e){}
-
-    show("result");
-  }
-
-  function loadRecords(){
-    try{
-      return JSON.parse(localStorage.getItem(STORAGE_RECORDS)||"[]");
-    }catch(e){ return []; }
-  }
-
-  function saveRecord(record){
-    const records=loadRecords();
-    records.push(record);
-
-    records.sort((a,b)=>{
-      if(a.absError!==b.absError) return a.absError-b.absError;
-      if((b.difficultyWeight||0)!==(a.difficultyWeight||0)) return (b.difficultyWeight||0)-(a.difficultyWeight||0);
-      return (b.createdAt||0)-(a.createdAt||0);
-    });
-
-    localStorage.setItem(STORAGE_RECORDS,JSON.stringify(records.slice(0,200)));
-  }
-
-  function signedError(r){
-    const sign=r.error>0?"+":r.error<0?"−":"±";
-    return sign+Math.abs(r.error).toFixed(r.decimals)+"초";
-  }
-
-  function renderRecords(){
-    const list=$("recordList");
-    const records=loadRecords();
-
-    if(!records.length){
-      list.innerHTML='<div class="empty">아직 기록이 없습니다.<br>게임을 한 번 플레이하면 가장 정확한 기록부터 자동으로 저장됩니다.</div>';
-      return;
-    }
-
-    list.innerHTML=records.map((r,i)=>`
-      <div class="record-card">
-        <div class="rank">#${i+1}</div>
-        <div class="record-main">
-          <strong>(${r.levelName}) ${r.target.toFixed(r.decimals)}초</strong>
-          <small>기록 ${r.actual.toFixed(r.decimals)}초${r.autoStopped?" · 자동 종료":""}</small>
+    <section id="menu" class="screen active" aria-label="메인 메뉴">
+      <div class="menu-body">
+        <p class="kicker">STOPWATCH GAME</p>
+        <h1>정확한 순간에<br>시간을 멈추세요.</h1>
+        <p class="description">랜덤 목표 시간은 항상 10초 미만.<br>10.000초에 자동 종료됩니다.</p>
+        <div class="streak-overview">
+          <span class="caption">현재 연속 성공</span>
+          <strong id="homeCombo">0 COMBO</strong>
         </div>
-        <div class="error">${signedError(r)}</div>
+        <div class="difficulty-set">
+          <p class="kicker">DIFFICULTY</p>
+          <button type="button" class="difficulty selected" data-level="easy"><span>쉬움</span><strong>0.0초</strong></button>
+          <button type="button" class="difficulty" data-level="normal"><span>보통</span><strong>0.00초</strong></button>
+          <button type="button" class="difficulty" data-level="hard"><span>어려움</span><strong>0.000초</strong></button>
+        </div>
+        <p class="rules-hint">GOOD 이상이면 콤보 +1 · MISS / TIME OUT이면 초기화</p>
       </div>
-    `).join("");
-  }
+      <div class="bottom-actions">
+        <button class="large-btn" type="button" id="enterGame">GAME START</button>
+        <div class="two-buttons">
+          <button class="outline-btn" type="button" id="menuRecords">내 기록</button>
+          <button class="outline-btn" type="button" id="menuAchievements">업적</button>
+        </div>
+      </div>
+    </section>
 
-  function loadAchievements(){
-    try{
-      return JSON.parse(localStorage.getItem(STORAGE_ACH)||'{"repeat":false,"sequence":false}');
-    }catch(e){ return {repeat:false,sequence:false}; }
-  }
+    <section id="game" class="screen" aria-label="게임">
+      <div class="game-navigation">
+        <button class="back" id="gameBack" type="button">← MENU</button>
+        <span class="pill" id="gameDifficulty">쉬움</span>
+      </div>
+      <div class="game-streak">CURRENT STREAK <strong id="gameCombo">0</strong></div>
+      <div class="target">
+        <p class="kicker">TARGET TIME</p>
+        <div class="target-value" id="target">3.7</div>
+        <div class="unit">SECONDS</div>
+      </div>
+      <div class="timer-area">
+        <div class="timer-number" id="clock">0.0</div>
+        <div class="timer-message" id="timerMessage">READY</div>
+      </div>
+      <div class="bottom-actions">
+        <button class="main-action" id="timerButton" type="button">START</button>
+      </div>
+    </section>
 
-  function saveAchievements(ach){
-    localStorage.setItem(STORAGE_ACH,JSON.stringify(ach));
-  }
+    <section id="result" class="screen" aria-label="게임 결과">
+      <div class="result-heading"><p class="kicker">YOUR RESULT</p><h2 id="resultGrade">GREAT</h2></div>
+      <div class="results-table">
+        <div class="metric"><small>목표</small><strong id="resultTarget">3.7초</strong></div>
+        <div class="metric"><small>기록</small><strong id="resultActual">3.8초</strong></div>
+        <div class="metric wide"><small>오차</small><strong id="resultError">+0.1초</strong></div>
+      </div>
+      <div class="result-streak"><span id="resultComboLabel">연속 성공</span><strong id="resultCombo">0 COMBO</strong></div>
+      <div class="unlock-message" id="unlocks" hidden></div>
+      <div class="result-buttons">
+        <button type="button" class="large-btn" id="retry">RETRY</button>
+        <button type="button" class="outline-btn" id="resultMenu">MENU</button>
+      </div>
+    </section>
 
-  function hasRepeatedTriple(digits){
-    return /(\d)\1\1/.test(digits);
-  }
+    <section id="records" class="screen scroll-page" aria-label="내 기록">
+      <div class="page-head">
+        <button class="back" type="button" id="recordsBack">← 돌아가기</button>
+        <div class="page-row"><h2>내 기록</h2><button class="tiny-link" type="button" id="clearRecords">기록 삭제</button></div>
+        <p class="page-note">난이도를 합쳐 절대 오차가 작은 순으로 정렬됩니다. 같은 오차라면 어려운 난이도가 먼저입니다.</p>
+      </div>
+      <div class="filter-row" role="group" aria-label="난이도별 기록 필터">
+        <button type="button" class="filter selected" data-filter="all" aria-pressed="true">전체</button>
+        <button type="button" class="filter" data-filter="easy" aria-pressed="false">쉬움</button>
+        <button type="button" class="filter" data-filter="normal" aria-pressed="false">보통</button>
+        <button type="button" class="filter" data-filter="hard" aria-pressed="false">어려움</button>
+      </div>
+      <p id="recordsSummary" class="kicker">0 RECORDS</p>
+      <div class="record-list" id="recordList"></div>
+      <div class="section-back"><button class="outline-btn" type="button" id="recordsMenu">메뉴로 돌아가기</button></div>
+    </section>
 
-  function hasSequenceTriple(digits){
-    for(let i=0;i<=digits.length-3;i++){
-      const a=Number(digits[i]),b=Number(digits[i+1]),c=Number(digits[i+2]);
-      if(b===a+1 && c===b+1) return true;
-      if(b===a-1 && c===b-1) return true;
+    <section id="achievements" class="screen scroll-page" aria-label="업적">
+      <div class="page-head">
+        <button class="back" type="button" id="achievementsBack">← 돌아가기</button>
+        <h2>업적</h2>
+        <p class="page-note">숫자 관련 업적은 무작위로 생성된 목표에서만 달성할 수 있습니다.</p>
+      </div>
+      <p id="achievementsSummary" class="achievement-summary">0 / 12 UNLOCKED</p>
+      <div id="achievementList" class="achievement-list"></div>
+      <div class="section-back"><button class="outline-btn" type="button" id="achievementsMenu">메뉴로 돌아가기</button></div>
+    </section>
+  </main>
+
+  <script>
+  (() => {
+    'use strict';
+    const $ = id => document.getElementById(id);
+    const levels = {
+      easy: { label: '쉬움', decimals: 1, min: 10, max: 99, unit: 10, rank: 1, good: .7, great: .3, excellent: .1 },
+      normal: { label: '보통', decimals: 2, min: 100, max: 999, unit: 100, rank: 2, good: .20, great: .08, excellent: .03 },
+      hard: { label: '어려움', decimals: 3, min: 1000, max: 9999, unit: 1000, rank: 3, good: .080, great: .030, excellent: .010 }
+    };
+    const keys = {
+      records: 'timeStopRecordsV3',
+      recordsOld: 'timeStopRecordsV2',
+      achievements: 'timeStopAchievementsV3',
+      achievementsOld: 'timeStopAchievementsV2',
+      streak: 'timeStopStreakV3'
+    };
+    const ACHIEVEMENTS = [
+      { id: 'repeat', icon: '777', name: '같은 숫자', desc: '목표에 7.77처럼 같은 숫자가 3개 연속 등장' },
+      { id: 'sequence', icon: '123', name: '순서대로', desc: '목표에 1.23 또는 3.21처럼 연속된 숫자 3개 등장' },
+      { id: 'ascend', icon: '↑', name: '오름차순', desc: '목표에 1.23처럼 숫자가 3개 연속 증가' },
+      { id: 'descend', icon: '↓', name: '내림차순', desc: '목표에 3.21처럼 숫자가 3개 연속 감소' },
+      { id: 'quad', icon: '×4', name: '포카드', desc: '목표에 1.111처럼 같은 숫자가 4개 연속 등장' },
+      { id: 'perfect', icon: '0', name: '퍼펙트', desc: '아무 난이도에서 PERFECT 기록 달성' },
+      { id: 'hardPerfect', icon: 'H', name: '밀리초의 달인', desc: '어려움 난이도에서 PERFECT 기록 달성' },
+      { id: 'streak3', icon: '3', name: '연속 성공 ×3', desc: 'GOOD 이상을 3번 연속 달성' },
+      { id: 'streak5', icon: '5', name: '연속 성공 ×5', desc: 'GOOD 이상을 5번 연속 달성' },
+      { id: 'streak10', icon: '10', name: '연속 성공 ×10', desc: 'GOOD 이상을 10번 연속 달성' },
+      { id: 'rounds10', icon: '10R', name: '열 번의 도전', desc: '게임을 총 10회 완료' },
+      { id: 'allLevels', icon: 'ALL', name: '삼단 정복', desc: '쉬움·보통·어려움에서 각각 GOOD 이상 달성' }
+    ];
+    const screenNames = ['menu','game','result','records','achievements'];
+    let currentScreen = 'menu', previousScreen = 'menu';
+    let level = 'easy', targetUnits = 0, startMs = 0, running = false, rafId = null;
+    let recordFilter = 'all';
+
+    function readJson(key, fallback) {
+      try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+      catch { return fallback; }
     }
-    return false;
-  }
-
-  function checkAchievements(targetText){
-    const digits=targetText.replace(".","");
-    const ach=loadAchievements();
-
-    if(hasRepeatedTriple(digits)) ach.repeat=true;
-    if(hasSequenceTriple(digits)) ach.sequence=true;
-
-    saveAchievements(ach);
-  }
-
-  function renderAchievements(){
-    const ach=loadAchievements();
-    const repeat=$("achRepeat");
-    const seq=$("achSequence");
-
-    repeat.classList.toggle("locked",!ach.repeat);
-    seq.classList.toggle("locked",!ach.sequence);
-
-    repeat.querySelector(".achievement-state").textContent=ach.repeat?"UNLOCKED":"LOCKED";
-    seq.querySelector(".achievement-state").textContent=ach.sequence?"UNLOCKED":"LOCKED";
-
-    const count=(ach.repeat?1:0)+(ach.sequence?1:0);
-    $("achievementCount").textContent=count+" / 2";
-  }
-
-  document.querySelectorAll(".diff").forEach(btn=>{
-    btn.addEventListener("click",function(){
-      document.querySelectorAll(".diff").forEach(b=>b.classList.remove("selected"));
-      this.classList.add("selected");
-      level=this.dataset.level;
+    function writeJson(key, value) {
+      try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+      catch { return false; }
+    }
+    function validateRecord(r) {
+      if (!r || !levels[r.level]) return null;
+      const cfg = levels[r.level];
+      const t = Number(r.target), a = Number(r.actual);
+      if (!Number.isFinite(t) || !Number.isFinite(a) || a < 0) return null;
+      const error = a - t;
+      return {level:r.level, target:t, actual:a, error, absError:Math.abs(error), decimals:cfg.decimals,
+        autoStopped:!!r.autoStopped, createdAt:Number(r.createdAt)||0, success:r.success === true || (r.success === undefined && !r.autoStopped && rating(Math.abs(error),cfg) !== 'MISS')};
+    }
+    function loadRecords() { const val = readJson(keys.records, []); return Array.isArray(val) ? val.map(validateRecord).filter(Boolean) : []; }
+    function loadAch() { const val = readJson(keys.achievements, {}); return val && typeof val === 'object' && !Array.isArray(val) ? val : {}; }
+    function loadStats() { const val = readJson(keys.streak, {current:0,best:0,rounds:0});
+      return {current:Math.max(0, Number(val.current)||0), best:Math.max(0,Number(val.best)||0),rounds:Math.max(0,Number(val.rounds)||0)};
+    }
+    function migrateV2() {
+      if (localStorage.getItem(keys.records) === null) {
+        const old = readJson(keys.recordsOld, []);
+        if (Array.isArray(old)) writeJson(keys.records, old.map(validateRecord).filter(Boolean));
+      }
+      if (localStorage.getItem(keys.achievements) === null) {
+        const old = readJson(keys.achievementsOld, {});
+        if (old && typeof old === 'object') writeJson(keys.achievements, {repeat:!!old.repeat,sequence:!!old.sequence});
+      }
+      if (localStorage.getItem(keys.streak) === null) writeJson(keys.streak, {current:0,best:0,rounds:loadRecords().length});
+    }
+    function home() { go('menu'); }
+    function go(name) {
+      if (currentScreen === 'game' && running) { running=false; cancelAnimationFrame(rafId); }
+      if (currentScreen !== name) previousScreen = currentScreen;
+      currentScreen = name;
+      for (const id of screenNames) $(id).classList.toggle('active',id === name);
+      if (name === 'menu') renderMenu();
+      if (name === 'records') renderRecords();
+      if (name === 'achievements') renderAchievements();
+      $(name).scrollTop = 0;
+      window.scrollTo(0,0);
+    }
+    function backFromPage() {
+      // A records/achievements visit during a game abandons that attempt.
+      // The menu is always a safe route back to playing.
+      go('menu');
+    }
+    function renderMenu() { $('homeCombo').textContent = loadStats().current + ' COMBO'; }
+    function newRound() {
+      const cfg = levels[level];
+      targetUnits = Math.floor(Math.random()*(cfg.max-cfg.min+1)) + cfg.min;
+      $('target').textContent = (targetUnits / cfg.unit).toFixed(cfg.decimals);
+      $('clock').textContent = (0).toFixed(cfg.decimals);
+      $('gameDifficulty').textContent = cfg.label;
+      $('gameCombo').textContent = loadStats().current;
+      $('timerMessage').textContent = 'READY · 10초 자동 종료';
+      $('timerButton').textContent = 'START';
+      $('timerButton').classList.remove('running');
+      running=false;
+      cancelAnimationFrame(rafId);
+      go('game');
+    }
+    function startRound() {
+      if (running) return;
+      startMs = performance.now();
+      running = true;
+      $('timerButton').textContent = 'STOP';
+      $('timerButton').classList.add('running');
+      $('timerMessage').textContent = 'NOW';
+      rafId = requestAnimationFrame(tick);
+    }
+    function tick(now) {
+      if (!running) return;
+      const elapsed = (now - startMs)/1000;
+      if (elapsed >= 10) { complete(10, true); return; }
+      $('clock').textContent = elapsed.toFixed(levels[level].decimals);
+      rafId = requestAnimationFrame(tick);
+    }
+    function rating(abs, cfg) {
+      if (Math.round(abs*cfg.unit) === 0) return 'PERFECT';
+      if (abs <= cfg.excellent + 1e-9) return 'EXCELLENT';
+      if (abs <= cfg.great + 1e-9) return 'GREAT';
+      if (abs <= cfg.good + 1e-9) return 'GOOD';
+      return 'MISS';
+    }
+    function stopRound() {
+      if (!running) { startRound(); return; }
+      const elapsed = (performance.now()-startMs)/1000;
+      complete(Math.min(elapsed,10), elapsed >= 10);
+    }
+    function saveRound(record) {
+      const records = loadRecords();
+      records.push(record);
+      // Limit stored records to prevent Safari storage quota issues.
+      if (records.length > 1000) records.splice(0, records.length - 1000);
+      writeJson(keys.records, records);
+    }
+    function updateAchievements(record, stats) {
+      const ach = loadAch();
+      const newly = [];
+      const digits = record.target.toFixed(levels[record.level].decimals).replace('.','');
+      const repeat = /(\d)\1\1/.test(digits);
+      const quad = /(\d)\1\1\1/.test(digits);
+      let ascending=false, descending=false;
+      for (let i=0; i<=digits.length-3; i++) {
+        const a=Number(digits[i]),b=Number(digits[i+1]),c=Number(digits[i+2]);
+        if(b===a+1 && c===b+1) ascending=true;
+        if(b===a-1 && c===b-1) descending=true;
+      }
+      const records = loadRecords();
+      const successLevels = new Set(records.filter(r=>r.success).map(r=>r.level));
+      const triggers = {
+        repeat, sequence:ascending||descending, ascend:ascending, descend:descending, quad,
+        perfect:!record.autoStopped && record.grade==='PERFECT',
+        hardPerfect:record.level==='hard' && !record.autoStopped && record.grade==='PERFECT',
+        streak3:stats.current>=3, streak5:stats.current>=5, streak10:stats.current>=10,
+        rounds10:stats.rounds>=10, allLevels:successLevels.size===3
+      };
+      ACHIEVEMENTS.forEach(a=>{
+        if(triggers[a.id] && !ach[a.id]) { ach[a.id]=true; newly.push(a.name); }
+      });
+      writeJson(keys.achievements, ach);
+      return newly;
+    }
+    function signed(num, precision) {
+      const digits = Math.abs(num).toFixed(precision);
+      const displayZero = Number(digits) === 0;
+      return (displayZero?'±':num>0?'+':'−')+digits+'초';
+    }
+    function complete(elapsed, autoStopped) {
+      if (!running) return;
+      running=false;
+      cancelAnimationFrame(rafId);
+      const cfg=levels[level];
+      const actual=autoStopped?10:elapsed;
+      const target=targetUnits/cfg.unit;
+      const delta=actual-target;
+      const absError=Math.abs(delta);
+      const grade=autoStopped?'TIME OUT':rating(absError,cfg);
+      const success=grade!=='MISS' && grade!=='TIME OUT';
+      const stats=loadStats();
+      stats.rounds+=1;
+      stats.current=success?stats.current+1:0;
+      stats.best=Math.max(stats.best,stats.current);
+      writeJson(keys.streak,stats);
+      const record={level, target,actual,error:delta,absError,autoStopped,createdAt:Date.now(),success,grade};
+      saveRound(record);
+      const unlocked=updateAchievements(record,stats);
+      $('resultGrade').textContent=grade;
+      $('resultTarget').textContent=target.toFixed(cfg.decimals)+'초';
+      $('resultActual').textContent=actual.toFixed(cfg.decimals)+'초';
+      $('resultError').textContent=signed(delta,cfg.decimals);
+      $('resultCombo').textContent=stats.current+' COMBO';
+      $('resultComboLabel').textContent=success?'연속 성공 +1':'콤보 초기화';
+      $('unlocks').hidden=unlocked.length===0;
+      $('unlocks').textContent=unlocked.length?'업적 달성! '+unlocked.join(' · '):'';
+      try { if ('vibrate' in navigator) navigator.vibrate(success?[45,30,60]:35); } catch {}
+      go('result');
+    }
+    function renderRecords() {
+      const records=loadRecords().filter(r=>recordFilter==='all'||r.level===recordFilter).sort((a,b)=>
+        Math.round(a.absError*1e6)-Math.round(b.absError*1e6) || levels[b.level].rank-levels[a.level].rank || b.createdAt-a.createdAt
+      );
+      $('recordsSummary').textContent=records.length+' RECORDS';
+      const list=$('recordList'); list.replaceChildren();
+      if (!records.length) {
+        const p=document.createElement('div');p.className='empty';
+        p.textContent=recordFilter==='all'?'아직 저장된 기록이 없습니다. 게임을 시작해보세요.':'이 난이도의 기록이 없습니다.';
+        list.append(p);return;
+      }
+      const frag=document.createDocumentFragment();
+      records.forEach((r,i)=>{
+        const row=document.createElement('div');row.className='record';
+        const rank=document.createElement('span');rank.className='rank';rank.textContent='#'+(i+1);
+        const main=document.createElement('div');main.className='record-main';
+        const title=document.createElement('strong');title.textContent='('+levels[r.level].label+') '+r.target.toFixed(levels[r.level].decimals)+'초';
+        const note=document.createElement('small');note.textContent='기록 '+r.actual.toFixed(levels[r.level].decimals)+'초'+(r.autoStopped?' · 자동 마감':'');
+        main.append(title,note);
+        const err=document.createElement('span');err.className='record-error';err.textContent=signed(r.error,levels[r.level].decimals);
+        row.append(rank,main,err);frag.append(row);
+      });
+      list.append(frag);
+    }
+    function renderAchievements() {
+      const ach=loadAch(), unlocked=ACHIEVEMENTS.filter(a=>ach[a.id]).length;
+      $('achievementsSummary').textContent=unlocked+' / '+ACHIEVEMENTS.length+' UNLOCKED';
+      const list=$('achievementList'); list.replaceChildren();
+      // Unlocked achievements first, locked achievements after.
+      const sorted=[...ACHIEVEMENTS].sort((a,b)=>Number(!!ach[b.id])-Number(!!ach[a.id]));
+      sorted.forEach(a=>{
+        const node=document.createElement('div');node.className='achievement'+(ach[a.id]?'':' locked');
+        const icon=document.createElement('div');icon.className='ach-icon';icon.textContent=a.icon;
+        const text=document.createElement('div');text.className='ach-text';
+        const name=document.createElement('strong');name.textContent=a.name;
+        const desc=document.createElement('small');desc.textContent=a.desc;
+        text.append(name,desc);
+        const status=document.createElement('div');status.className='ach-status';status.textContent=ach[a.id]?'완료':'LOCKED';
+        node.append(icon,text,status);list.append(node);
+      });
+    }
+    // Continue timer check when switching back to the browser, even if requestAnimationFrame was paused.
+    document.addEventListener('visibilitychange',()=>{
+      if(!document.hidden && currentScreen==='game' && running && (performance.now()-startMs)>=10000) complete(10,true);
     });
-  });
-
-  $("gameStart").addEventListener("click",()=>{setup();show("game")});
-  $("back").addEventListener("click",()=>show("menu"));
-  $("action").addEventListener("click",stop);
-  $("retry").addEventListener("click",()=>{setup();show("game")});
-  $("difficulty").addEventListener("click",()=>show("menu"));
-
-  $("recordsBtn").addEventListener("click",()=>show("records"));
-  $("recordsTop").addEventListener("click",()=>show("records"));
-  $("achievementsBtn").addEventListener("click",()=>show("achievements"));
-  $("achievementsTop").addEventListener("click",()=>show("achievements"));
-
-  $("clearRecords").addEventListener("click",()=>{
-    if(confirm("저장된 모든 기록을 삭제할까요?")){
-      localStorage.removeItem(STORAGE_RECORDS);
+    document.querySelectorAll('.difficulty').forEach(btn=>btn.addEventListener('click',()=>{
+      document.querySelectorAll('.difficulty').forEach(b=>b.classList.toggle('selected',b===btn));
+      level=btn.dataset.level;
+    }));
+    document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{
+      recordFilter=btn.dataset.filter;
+      document.querySelectorAll('.filter').forEach(b=>{
+        const active=b===btn;b.classList.toggle('selected',active);b.setAttribute('aria-pressed',String(active));
+      });
       renderRecords();
-    }
-  });
-
-  if("serviceWorker" in navigator){
-    window.addEventListener("load",()=>{
-      navigator.serviceWorker.register("./sw.js").catch(()=>{});
+    }));
+    $('homeBrand').addEventListener('click',home);
+    $('topRecords').addEventListener('click',()=>go('records'));
+    $('topAchievements').addEventListener('click',()=>go('achievements'));
+    $('menuRecords').addEventListener('click',()=>go('records'));
+    $('menuAchievements').addEventListener('click',()=>go('achievements'));
+    $('enterGame').addEventListener('click',newRound);
+    $('gameBack').addEventListener('click',home);
+    $('timerButton').addEventListener('click',stopRound);
+    $('retry').addEventListener('click',newRound);
+    $('resultMenu').addEventListener('click',home);
+    ['recordsBack','recordsMenu','achievementsBack','achievementsMenu'].forEach(id=>$(id).addEventListener('click',backFromPage));
+    $('clearRecords').addEventListener('click',()=>{
+      if(window.confirm('저장된 기록을 모두 삭제할까요? 업적과 콤보는 유지됩니다.')){
+        writeJson(keys.records,[]);renderRecords();
+      }
     });
-  }
-})();
-</script>
+    migrateV2();
+    renderMenu();
+    if ('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')) {
+      window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+    }
+  })();
+  </script>
 </body>
 </html>
