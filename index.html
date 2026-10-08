@@ -2,483 +2,240 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>TIME STOP</title>
-
-  
-<style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-}
-:root{
-  --bg:#000;
-  --fg:#fff;
-  --muted:#8f8f8f;
-  --line:#292929;
-  --panel:#0c0c0c;
-}
-html,body{
-  margin:0;
-  width:100%;
-  min-height:100%;
-  background:#000;
-  color:#fff;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Roboto,Arial,sans-serif;
-  overscroll-behavior:none;
-}
-body{
-  min-height:100vh;
-  min-height:100svh;
-  min-height:100dvh;
-}
-button{
-  font:inherit;
-  -webkit-appearance:none;
-  appearance:none;
-}
-button:active{transform:scale(.985)}
-
-.app{
-  width:100%;
-  max-width:540px;
-  min-height:100vh;
-  min-height:100svh;
-  min-height:100dvh;
-  margin:0 auto;
-  padding:
-    max(14px, env(safe-area-inset-top))
-    clamp(16px, 5vw, 24px)
-    max(16px, env(safe-area-inset-bottom));
-  display:flex;
-  flex-direction:column;
-}
-
-.topbar{
-  height:46px;
-  flex:0 0 46px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.brand{
-  font-size:13px;
-  font-weight:900;
-  letter-spacing:.22em;
-}
-.text-btn{
-  border:0;
-  padding:10px 0;
-  background:transparent;
-  color:var(--muted);
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.08em;
-}
-
-.screen{
-  display:none !important;
-  flex:1;
-  min-height:0;
-}
-.screen.active{
-  display:flex !important;
-  flex-direction:column;
-}
-
-#menu{
-  padding-top:clamp(28px,7vh,70px);
-}
-.menu-main{
-  flex:1;
-}
-.eyebrow,.label{
-  margin:0 0 10px;
-  color:var(--muted);
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.16em;
-}
-h1{
-  margin:0;
-  max-width:390px;
-  font-size:clamp(34px,9.5vw,54px);
-  line-height:1.06;
-  letter-spacing:-.055em;
-  word-break:keep-all;
-}
-.desc{
-  margin:17px 0 0;
-  color:var(--muted);
-  font-size:14px;
-  line-height:1.55;
-  word-break:keep-all;
-}
-
-.difficulty-box{
-  margin-top:clamp(30px,7vh,56px);
-  display:grid;
-  gap:10px;
-}
-.diff{
-  width:100%;
-  min-height:64px;
-  padding:0 18px;
-  border:1px solid var(--line);
-  border-radius:16px;
-  background:var(--panel);
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.diff span{
-  font-size:15px;
-  font-weight:850;
-}
-.diff strong{
-  font-size:18px;
-  font-weight:850;
-  font-variant-numeric:tabular-nums;
-}
-.diff.selected{
-  background:#fff;
-  color:#000;
-  border-color:#fff;
-}
-
-.bottom{
-  flex:0 0 auto;
-  padding-top:16px;
-}
-.primary,.secondary,.action{
-  width:100%;
-  border-radius:16px;
-  font-weight:900;
-  letter-spacing:.08em;
-}
-.primary{
-  min-height:62px;
-  border:1px solid #fff;
-  background:#fff;
-  color:#000;
-}
-.secondary{
-  min-height:58px;
-  border:1px solid var(--line);
-  background:transparent;
-  color:#fff;
-}
-
-#game{
-  padding-top:4px;
-}
-.game-head{
-  flex:0 0 auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.badge{
-  padding:7px 11px;
-  border:1px solid var(--line);
-  border-radius:999px;
-  color:#fff;
-  font-size:11px;
-  font-weight:850;
-}
-.target{
-  margin-top:clamp(28px,7vh,68px);
-  text-align:center;
-}
-.target-num{
-  font-size:clamp(64px,19vw,106px);
-  line-height:.94;
-  font-weight:950;
-  letter-spacing:-.06em;
-  font-variant-numeric:tabular-nums;
-  white-space:nowrap;
-}
-.sec{
-  margin-top:10px;
-  color:var(--muted);
-  font-size:11px;
-  font-weight:850;
-  letter-spacing:.22em;
-}
-.timer-area{
-  flex:1;
-  min-height:150px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-}
-.timer{
-  font-size:clamp(50px,16vw,84px);
-  line-height:1;
-  font-weight:300;
-  letter-spacing:-.045em;
-  font-variant-numeric:tabular-nums;
-  white-space:nowrap;
-}
-.state{
-  margin-top:14px;
-  color:var(--muted);
-  font-size:11px;
-  font-weight:850;
-  letter-spacing:.18em;
-}
-.action{
-  min-height:82px;
-  border:2px solid #fff;
-  background:#fff;
-  color:#000;
-  font-size:21px;
-}
-.action.running{
-  background:#000;
-  color:#fff;
-}
-
-#result{
-  justify-content:center;
-  gap:clamp(26px,5vh,44px);
-  padding-top:20px;
-}
-.result-title{
-  text-align:center;
-}
-.result-title h2{
-  margin:0;
-  font-size:clamp(48px,15vw,80px);
-  line-height:1;
-  letter-spacing:-.05em;
-}
-.result-card{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  border:1px solid var(--line);
-  border-radius:16px;
-  overflow:hidden;
-}
-.metric{
-  min-width:0;
-  padding:20px 17px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.metric:first-child{
-  border-right:1px solid var(--line);
-}
-.metric.full{
-  grid-column:1/-1;
-  border-top:1px solid var(--line);
-  text-align:center;
-}
-.metric span{
-  color:var(--muted);
-  font-size:11px;
-  font-weight:800;
-}
-.metric strong{
-  font-size:clamp(20px,6vw,26px);
-  font-variant-numeric:tabular-nums;
-  white-space:nowrap;
-}
-.metric.full strong{
-  font-size:clamp(32px,9vw,42px);
-}
-.result-buttons{
-  display:grid;
-  gap:9px;
-}
-
-@media (orientation:landscape) and (max-height:650px){
-  .app{
-    max-width:900px;
-    padding-top:max(8px, env(safe-area-inset-top));
-    padding-bottom:max(8px, env(safe-area-inset-bottom));
-  }
-  .topbar{
-    height:36px;
-    flex-basis:36px;
-  }
-  #menu{
-    padding-top:10px;
-  }
-  h1{
-    font-size:32px;
-  }
-  .desc{
-    margin-top:10px;
-  }
-  .difficulty-box{
-    margin-top:18px;
-    grid-template-columns:repeat(3,1fr);
-  }
-  .diff{
-    min-height:54px;
-    padding:0 14px;
-  }
-  .primary{
-    min-height:52px;
-  }
-  .target{
-    margin-top:8px;
-  }
-  .target-num{
-    font-size:58px;
-  }
-  .timer-area{
-    min-height:75px;
-  }
-  .timer{
-    font-size:46px;
-  }
-  .action{
-    min-height:58px;
-  }
-  #result{
-    padding-top:8px;
-    gap:14px;
-  }
-  .result-title h2{
-    font-size:48px;
-  }
-  .metric{
-    padding:12px 15px;
-  }
-}
-
-@media (max-width:360px){
-  .app{
-    padding-left:13px;
-    padding-right:13px;
-  }
-  h1{font-size:31px}
-  .target-num{font-size:56px}
-  .timer{font-size:46px}
-}
-</style>
-
+<meta name="apple-mobile-web-app-title" content="TIME STOP">
+<meta name="format-detection" content="telephone=no">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="TIME STOP">
+<title>TIME STOP</title>
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#000;--fg:#fff;--muted:#8c8c8c;--line:#292929;--panel:#0d0d0d;--panel2:#151515}
+html,body{margin:0;width:100%;min-height:100%;background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Roboto,Arial,sans-serif;overscroll-behavior:none}
+body{min-height:100vh;min-height:100svh;min-height:100dvh}
+button{font:inherit;-webkit-appearance:none;appearance:none;touch-action:manipulation}
+button:active{transform:scale(.985)}
+.app{width:100%;max-width:560px;min-height:100vh;min-height:100svh;min-height:100dvh;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) clamp(16px,5vw,24px) max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.topbar{height:46px;flex:0 0 46px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:13px;font-weight:900;letter-spacing:.22em}
+.top-actions{display:flex;gap:14px;align-items:center}
+.text-btn{border:0;padding:10px 0;background:transparent;color:var(--muted);font-size:11px;font-weight:850;letter-spacing:.08em}
+.screen{display:none!important;flex:1;min-height:0}
+.screen.active{display:flex!important;flex-direction:column}
+.eyebrow,.label{margin:0 0 10px;color:var(--muted);font-size:11px;font-weight:900;letter-spacing:.16em}
+h1{margin:0;max-width:390px;font-size:clamp(34px,9.5vw,54px);line-height:1.06;letter-spacing:-.055em;word-break:keep-all}
+.desc{margin:17px 0 0;color:var(--muted);font-size:14px;line-height:1.55;word-break:keep-all}
+.bottom{flex:0 0 auto;padding-top:16px}
+.primary,.secondary,.action{width:100%;border-radius:16px;font-weight:900;letter-spacing:.08em}
+.primary{min-height:62px;border:1px solid #fff;background:#fff;color:#000}
+.secondary{min-height:58px;border:1px solid var(--line);background:transparent;color:#fff}
+.nav-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}
+.nav-btn{min-height:52px;border:1px solid var(--line);border-radius:14px;background:var(--panel);color:#fff;font-size:12px;font-weight:850;letter-spacing:.05em}
+
+#menu{padding-top:clamp(28px,7vh,70px)}
+.menu-main{flex:1}
+.difficulty-box{margin-top:clamp(30px,7vh,56px);display:grid;gap:10px}
+.diff{width:100%;min-height:64px;padding:0 18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:#fff;display:flex;align-items:center;justify-content:space-between}
+.diff span{font-size:15px;font-weight:850}.diff strong{font-size:18px;font-weight:850;font-variant-numeric:tabular-nums}
+.diff.selected{background:#fff;color:#000;border-color:#fff}
+
+#game{padding-top:4px}
+.game-head{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between}
+.badge{padding:7px 11px;border:1px solid var(--line);border-radius:999px;color:#fff;font-size:11px;font-weight:850}
+.target{margin-top:clamp(28px,7vh,62px);text-align:center}
+.target-num{font-size:clamp(64px,19vw,106px);line-height:.94;font-weight:950;letter-spacing:-.06em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sec{margin-top:10px;color:var(--muted);font-size:11px;font-weight:850;letter-spacing:.22em}
+.timer-area{flex:1;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.timer{font-size:clamp(50px,16vw,84px);line-height:1;font-weight:300;letter-spacing:-.045em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.state{margin-top:14px;color:var(--muted);font-size:11px;font-weight:850;letter-spacing:.18em;text-align:center}
+.action{min-height:82px;border:2px solid #fff;background:#fff;color:#000;font-size:21px}.action.running{background:#000;color:#fff}
+
+#result{justify-content:center;gap:clamp(24px,5vh,42px);padding-top:20px}
+.result-title{text-align:center}.result-title h2{margin:0;font-size:clamp(48px,15vw,80px);line-height:1;letter-spacing:-.05em}
+.result-card{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.metric{min-width:0;padding:20px 17px;display:flex;flex-direction:column;gap:8px}.metric:first-child{border-right:1px solid var(--line)}
+.metric.full{grid-column:1/-1;border-top:1px solid var(--line);text-align:center}
+.metric span{color:var(--muted);font-size:11px;font-weight:800}.metric strong{font-size:clamp(20px,6vw,26px);font-variant-numeric:tabular-nums;white-space:nowrap}.metric.full strong{font-size:clamp(32px,9vw,42px)}
+.result-buttons{display:grid;gap:9px}
+
+.page-head{display:flex;justify-content:space-between;align-items:end;margin:24px 0 18px}
+.page-head h2{margin:0;font-size:30px;letter-spacing:-.04em}
+.page-head small{color:var(--muted);font-size:11px}
+.list{display:grid;gap:9px;padding-bottom:14px}
+.record-card{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:15px;background:var(--panel);padding:14px}
+.rank{width:28px;color:var(--muted);font-size:12px;font-weight:900}
+.record-main{min-width:0}.record-main strong{display:block;font-size:17px}.record-main small{display:block;margin-top:4px;color:var(--muted);font-size:11px}
+.error{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
+.empty{border:1px dashed var(--line);border-radius:16px;padding:28px 18px;text-align:center;color:var(--muted);font-size:13px;line-height:1.6}
+.clear-btn{border:0;background:transparent;color:var(--muted);font-size:11px;text-decoration:underline}
+
+.achievement-grid{display:grid;gap:10px}
+.achievement{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:17px;display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center}
+.achievement.locked{opacity:.48}
+.achievement-icon{width:42px;height:42px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900}
+.achievement h3{margin:0 0 5px;font-size:15px}.achievement p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}.achievement-state{font-size:11px;font-weight:900}
+.notice{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:13px 14px;color:var(--muted);font-size:11px;line-height:1.55}
+
+@media(max-width:360px){
+.app{padding-left:13px;padding-right:13px}h1{font-size:31px}.target-num{font-size:56px}.timer{font-size:46px}
+.record-card{grid-template-columns:24px 1fr}.error{grid-column:2;font-size:18px}
+}
+</style>
 </head>
 
 <body>
 <main class="app">
-  <header class="topbar">
-    <div class="brand">TIME STOP</div>
-    <button id="sound" class="text-btn" type="button">SOUND ON</button>
-  </header>
+<header class="topbar">
+  <div class="brand">TIME STOP</div>
+  <div class="top-actions">
+    <button id="recordsTop" class="text-btn" type="button">RECORDS</button>
+    <button id="achievementsTop" class="text-btn" type="button">ACHIEVEMENTS</button>
+  </div>
+</header>
 
-  <section id="menu" class="screen active">
-    <div class="menu-main">
-      <p class="eyebrow">STOPWATCH GAME</p>
-      <h1>정확한 순간에<br>시간을 멈추세요.</h1>
-      <p class="desc">목표 시간과 최대한 가깝게 멈추는 게임입니다.</p>
+<section id="menu" class="screen active">
+  <div class="menu-main">
+    <p class="eyebrow">STOPWATCH GAME</p>
+    <h1>정확한 순간에<br>시간을 멈추세요.</h1>
+    <p class="desc">목표 시간은 항상 10초 미만에서 무작위로 생성됩니다.</p>
 
-      <div class="difficulty-box">
-        <p class="label" style="grid-column:1/-1">DIFFICULTY</p>
+    <div class="difficulty-box">
+      <p class="label">DIFFICULTY</p>
+      <button class="diff selected" data-level="easy" type="button"><span>쉬움</span><strong>0.0초</strong></button>
+      <button class="diff" data-level="normal" type="button"><span>보통</span><strong>0.00초</strong></button>
+      <button class="diff" data-level="hard" type="button"><span>어려움</span><strong>0.000초</strong></button>
+    </div>
+  </div>
 
-        <button class="diff selected" data-level="easy" type="button">
-          <span>쉬움</span><strong>0.0초</strong>
-        </button>
+  <div class="bottom">
+    <button id="gameStart" class="primary" type="button">GAME START</button>
+    <div class="nav-grid">
+      <button id="recordsBtn" class="nav-btn" type="button">MY RECORDS</button>
+      <button id="achievementsBtn" class="nav-btn" type="button">ACHIEVEMENTS</button>
+    </div>
+  </div>
+</section>
 
-        <button class="diff" data-level="normal" type="button">
-          <span>보통</span><strong>0.00초</strong>
-        </button>
+<section id="game" class="screen">
+  <div class="game-head">
+    <button id="back" class="text-btn" type="button">← BACK</button>
+    <div id="badge" class="badge">쉬움</div>
+  </div>
 
-        <button class="diff" data-level="hard" type="button">
-          <span>어려움</span><strong>00.000초</strong>
-        </button>
+  <div class="target">
+    <p class="label">TARGET TIME</p>
+    <div id="targetNum" class="target-num">3.7</div>
+    <div class="sec">SEC</div>
+  </div>
+
+  <div class="timer-area">
+    <div id="timer" class="timer">0.0</div>
+    <div id="state" class="state">READY</div>
+  </div>
+
+  <div class="bottom">
+    <button id="action" class="action" type="button">START</button>
+  </div>
+</section>
+
+<section id="result" class="screen">
+  <div class="result-title">
+    <p class="label">RESULT</p>
+    <h2 id="judge">GOOD</h2>
+  </div>
+
+  <div class="result-card">
+    <div class="metric"><span>목표</span><strong id="rTarget">3.7초</strong></div>
+    <div class="metric"><span>기록</span><strong id="rActual">3.8초</strong></div>
+    <div class="metric full"><span>오차</span><strong id="rError">+0.1초</strong></div>
+  </div>
+
+  <div class="result-buttons">
+    <button id="retry" class="primary" type="button">RETRY</button>
+    <button id="difficulty" class="secondary" type="button">DIFFICULTY</button>
+  </div>
+</section>
+
+<section id="records" class="screen">
+  <div class="page-head">
+    <div>
+      <p class="label">PERSONAL BEST</p>
+      <h2>내 기록</h2>
+    </div>
+    <button id="clearRecords" class="clear-btn" type="button">전체 삭제</button>
+  </div>
+  <div id="recordList" class="list"></div>
+</section>
+
+<section id="achievements" class="screen">
+  <div class="page-head">
+    <div>
+      <p class="label">ACHIEVEMENTS</p>
+      <h2>업적</h2>
+    </div>
+    <small id="achievementCount">0 / 2</small>
+  </div>
+
+  <div class="achievement-grid">
+    <div id="achRepeat" class="achievement locked">
+      <div class="achievement-icon">777</div>
+      <div>
+        <h3>같은 숫자</h3>
+        <p>무작위 목표가 7.77처럼 같은 숫자 3개 이상을 포함한 라운드를 완료하세요.</p>
       </div>
+      <div class="achievement-state">LOCKED</div>
     </div>
 
-    <div class="bottom">
-      <button id="gameStart" class="primary" type="button">GAME START</button>
-    </div>
-  </section>
-
-  <section id="game" class="screen">
-    <div class="game-head">
-      <button id="back" class="text-btn" type="button">← BACK</button>
-      <div id="badge" class="badge">쉬움</div>
-    </div>
-
-    <div class="target">
-      <p class="label">TARGET TIME</p>
-      <div id="targetNum" class="target-num">3.7</div>
-      <div class="sec">SEC</div>
-    </div>
-
-    <div class="timer-area">
-      <div id="timer" class="timer">0.0</div>
-      <div id="state" class="state">READY</div>
-    </div>
-
-    <div class="bottom">
-      <button id="action" class="action" type="button">START</button>
-    </div>
-  </section>
-
-  <section id="result" class="screen">
-    <div class="result-title">
-      <p class="label">RESULT</p>
-      <h2 id="judge">GOOD</h2>
-    </div>
-
-    <div class="result-card">
-      <div class="metric">
-        <span>목표</span>
-        <strong id="rTarget">3.7초</strong>
+    <div id="achSequence" class="achievement locked">
+      <div class="achievement-icon">123</div>
+      <div>
+        <h3>순서대로</h3>
+        <p>무작위 목표가 1.23처럼 연속된 숫자 3개 이상을 포함한 라운드를 완료하세요.</p>
       </div>
-      <div class="metric">
-        <span>기록</span>
-        <strong id="rActual">3.8초</strong>
-      </div>
-      <div class="metric full">
-        <span>오차</span>
-        <strong id="rError">+0.1초</strong>
-      </div>
+      <div class="achievement-state">LOCKED</div>
     </div>
+  </div>
 
-    <div class="result-buttons">
-      <button id="retry" class="primary" type="button">RETRY</button>
-      <button id="difficulty" class="secondary" type="button">DIFFICULTY</button>
-    </div>
-  </section>
+  <div class="notice">
+    업적용 목표도 별도로 만들어지지 않습니다. 모든 목표는 일반 게임과 동일하게 완전 무작위로 생성되며, 해당 패턴이 우연히 나온 라운드를 완료하면 해금됩니다.
+  </div>
+</section>
 </main>
 
 <script>
 (function(){
   const levels={
-    easy:{name:"쉬움",decimals:1,min:10,max:99,div:10},
-    normal:{name:"보통",decimals:2,min:100,max:999,div:100},
-    hard:{name:"어려움",decimals:3,min:10000,max:30000,div:1000}
+    easy:{name:"쉬움",decimals:1,min:10,max:99,div:10,weight:1},
+    normal:{name:"보통",decimals:2,min:100,max:999,div:100,weight:2},
+    hard:{name:"어려움",decimals:3,min:1000,max:9999,div:1000,weight:3}
   };
+
+  const STORAGE_RECORDS="timeStopRecordsV2";
+  const STORAGE_ACH="timeStopAchievementsV2";
 
   let level="easy";
   let target=0;
   let startTime=0;
   let raf=0;
   let running=false;
-  let soundOn=true;
+  let autoStopAt=10;
+  let currentTargetText="";
 
   const $=id=>document.getElementById(id);
-  const screens=[$("menu"),$("game"),$("result")];
+  const screens=["menu","game","result","records","achievements"].map($);
 
   function show(id){
+    running=false;
+    cancelAnimationFrame(raf);
     screens.forEach(s=>s.classList.remove("active"));
     $(id).classList.add("active");
-    try{window.scrollTo(0,0)}catch(e){}
+    if(id==="records") renderRecords();
+    if(id==="achievements") renderAchievements();
+    window.scrollTo(0,0);
   }
 
   function rand(min,max){
@@ -488,10 +245,16 @@ h1{
   function setup(){
     const c=levels[level];
     target=rand(c.min,c.max)/c.div;
+    currentTargetText=target.toFixed(c.decimals);
+
+    // 다음 10초 단위로 올림. 현재 목표는 항상 10초 미만이므로 10초에서 자동 종료.
+    autoStopAt=Math.ceil(target/10)*10;
+    if(autoStopAt<10) autoStopAt=10;
+
     $("badge").textContent=c.name;
-    $("targetNum").textContent=target.toFixed(c.decimals);
+    $("targetNum").textContent=currentTargetText;
     $("timer").textContent=(0).toFixed(c.decimals);
-    $("state").textContent="READY";
+    $("state").textContent="READY · "+autoStopAt.toFixed(0)+"초 자동 마감";
     $("action").textContent="START";
     $("action").classList.remove("running");
     running=false;
@@ -501,6 +264,15 @@ h1{
     if(!running)return;
     const c=levels[level];
     const elapsed=(now-startTime)/1000;
+
+    if(elapsed>=autoStopAt){
+      running=false;
+      cancelAnimationFrame(raf);
+      $("timer").textContent=autoStopAt.toFixed(c.decimals);
+      finish(autoStopAt,true);
+      return;
+    }
+
     $("timer").textContent=elapsed.toFixed(c.decimals);
     raf=requestAnimationFrame(tick);
   }
@@ -509,7 +281,7 @@ h1{
     if(running)return;
     running=true;
     startTime=performance.now();
-    $("state").textContent="NOW";
+    $("state").textContent="NOW · "+autoStopAt.toFixed(0)+"초에서 자동 종료";
     $("action").textContent="STOP";
     $("action").classList.add("running");
     raf=requestAnimationFrame(tick);
@@ -523,63 +295,153 @@ h1{
     const end=performance.now();
     running=false;
     cancelAnimationFrame(raf);
-    const elapsed=(end-startTime)/1000;
-    finish(elapsed);
+    finish((end-startTime)/1000,false);
   }
 
-  function judgement(error,decimals){
-    const perfect=0.5*Math.pow(10,-decimals);
-    if(error<perfect)return "PERFECT";
-
-    if(decimals===1){
-      if(error<=0.1)return "EXCELLENT";
-      if(error<=0.3)return "GREAT";
-      if(error<=0.7)return "GOOD";
-      return "MISS";
+  function judgement(error,d){
+    const perfect=.5*Math.pow(10,-d);
+    if(error<perfect)return"PERFECT";
+    if(d===1){
+      if(error<=.1)return"EXCELLENT";
+      if(error<=.3)return"GREAT";
+      if(error<=.7)return"GOOD";
+      return"MISS";
     }
-    if(decimals===2){
-      if(error<=0.03)return "EXCELLENT";
-      if(error<=0.08)return "GREAT";
-      if(error<=0.20)return "GOOD";
-      return "MISS";
+    if(d===2){
+      if(error<=.03)return"EXCELLENT";
+      if(error<=.08)return"GREAT";
+      if(error<=.2)return"GOOD";
+      return"MISS";
     }
-    if(error<=0.010)return "EXCELLENT";
-    if(error<=0.030)return "GREAT";
-    if(error<=0.080)return "GOOD";
-    return "MISS";
+    if(error<=.01)return"EXCELLENT";
+    if(error<=.03)return"GREAT";
+    if(error<=.08)return"GOOD";
+    return"MISS";
   }
 
-  function finish(elapsed){
+  function finish(elapsed,autoStopped){
     const c=levels[level];
     const delta=elapsed-target;
     const error=Math.abs(delta);
 
-    $("judge").textContent=judgement(error,c.decimals);
+    $("judge").textContent=autoStopped ? "TIME OUT" : judgement(error,c.decimals);
     $("rTarget").textContent=target.toFixed(c.decimals)+"초";
     $("rActual").textContent=elapsed.toFixed(c.decimals)+"초";
     $("rError").textContent=(delta>0?"+":delta<0?"−":"±")+error.toFixed(c.decimals)+"초";
 
+    saveRecord({
+      level,
+      levelName:c.name,
+      decimals:c.decimals,
+      difficultyWeight:c.weight,
+      target,
+      actual:elapsed,
+      error:delta,
+      absError:error,
+      autoStopped,
+      createdAt:Date.now()
+    });
+
+    checkAchievements(currentTargetText);
+
     try{
-      if("vibrate" in navigator) navigator.vibrate(error<0.01?[35,30,60]:40);
+      if("vibrate" in navigator) navigator.vibrate(error<.01?[35,30,60]:40);
     }catch(e){}
 
-    tone(error);
     show("result");
   }
 
-  function tone(error){
-    if(!soundOn)return;
+  function loadRecords(){
     try{
-      const AC=window.AudioContext||window.webkitAudioContext;
-      if(!AC)return;
-      const ctx=new AC();
-      const o=ctx.createOscillator();
-      const g=ctx.createGain();
-      o.frequency.value=error<0.01?880:error<0.1?660:320;
-      g.gain.value=.035;
-      o.connect(g);g.connect(ctx.destination);
-      o.start();o.stop(ctx.currentTime+.11);
-    }catch(e){}
+      return JSON.parse(localStorage.getItem(STORAGE_RECORDS)||"[]");
+    }catch(e){ return []; }
+  }
+
+  function saveRecord(record){
+    const records=loadRecords();
+    records.push(record);
+
+    records.sort((a,b)=>{
+      if(a.absError!==b.absError) return a.absError-b.absError;
+      if((b.difficultyWeight||0)!==(a.difficultyWeight||0)) return (b.difficultyWeight||0)-(a.difficultyWeight||0);
+      return (b.createdAt||0)-(a.createdAt||0);
+    });
+
+    localStorage.setItem(STORAGE_RECORDS,JSON.stringify(records.slice(0,200)));
+  }
+
+  function signedError(r){
+    const sign=r.error>0?"+":r.error<0?"−":"±";
+    return sign+Math.abs(r.error).toFixed(r.decimals)+"초";
+  }
+
+  function renderRecords(){
+    const list=$("recordList");
+    const records=loadRecords();
+
+    if(!records.length){
+      list.innerHTML='<div class="empty">아직 기록이 없습니다.<br>게임을 한 번 플레이하면 가장 정확한 기록부터 자동으로 저장됩니다.</div>';
+      return;
+    }
+
+    list.innerHTML=records.map((r,i)=>`
+      <div class="record-card">
+        <div class="rank">#${i+1}</div>
+        <div class="record-main">
+          <strong>(${r.levelName}) ${r.target.toFixed(r.decimals)}초</strong>
+          <small>기록 ${r.actual.toFixed(r.decimals)}초${r.autoStopped?" · 자동 종료":""}</small>
+        </div>
+        <div class="error">${signedError(r)}</div>
+      </div>
+    `).join("");
+  }
+
+  function loadAchievements(){
+    try{
+      return JSON.parse(localStorage.getItem(STORAGE_ACH)||'{"repeat":false,"sequence":false}');
+    }catch(e){ return {repeat:false,sequence:false}; }
+  }
+
+  function saveAchievements(ach){
+    localStorage.setItem(STORAGE_ACH,JSON.stringify(ach));
+  }
+
+  function hasRepeatedTriple(digits){
+    return /(\d)\1\1/.test(digits);
+  }
+
+  function hasSequenceTriple(digits){
+    for(let i=0;i<=digits.length-3;i++){
+      const a=Number(digits[i]),b=Number(digits[i+1]),c=Number(digits[i+2]);
+      if(b===a+1 && c===b+1) return true;
+      if(b===a-1 && c===b-1) return true;
+    }
+    return false;
+  }
+
+  function checkAchievements(targetText){
+    const digits=targetText.replace(".","");
+    const ach=loadAchievements();
+
+    if(hasRepeatedTriple(digits)) ach.repeat=true;
+    if(hasSequenceTriple(digits)) ach.sequence=true;
+
+    saveAchievements(ach);
+  }
+
+  function renderAchievements(){
+    const ach=loadAchievements();
+    const repeat=$("achRepeat");
+    const seq=$("achSequence");
+
+    repeat.classList.toggle("locked",!ach.repeat);
+    seq.classList.toggle("locked",!ach.sequence);
+
+    repeat.querySelector(".achievement-state").textContent=ach.repeat?"UNLOCKED":"LOCKED";
+    seq.querySelector(".achievement-state").textContent=ach.sequence?"UNLOCKED":"LOCKED";
+
+    const count=(ach.repeat?1:0)+(ach.sequence?1:0);
+    $("achievementCount").textContent=count+" / 2";
   }
 
   document.querySelectorAll(".diff").forEach(btn=>{
@@ -590,39 +452,30 @@ h1{
     });
   });
 
-  $("gameStart").addEventListener("click",()=>{
-    setup();
-    show("game");
-  });
-
-  $("back").addEventListener("click",()=>{
-    running=false;
-    cancelAnimationFrame(raf);
-    show("menu");
-  });
-
+  $("gameStart").addEventListener("click",()=>{setup();show("game")});
+  $("back").addEventListener("click",()=>show("menu"));
   $("action").addEventListener("click",stop);
-
-  $("retry").addEventListener("click",()=>{
-    setup();
-    show("game");
-  });
-
+  $("retry").addEventListener("click",()=>{setup();show("game")});
   $("difficulty").addEventListener("click",()=>show("menu"));
 
-  $("sound").addEventListener("click",()=>{
-    soundOn=!soundOn;
-    $("sound").textContent=soundOn?"SOUND ON":"SOUND OFF";
-  });
-})();
-</script>
+  $("recordsBtn").addEventListener("click",()=>show("records"));
+  $("recordsTop").addEventListener("click",()=>show("records"));
+  $("achievementsBtn").addEventListener("click",()=>show("achievements"));
+  $("achievementsTop").addEventListener("click",()=>show("achievements"));
 
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  $("clearRecords").addEventListener("click",()=>{
+    if(confirm("저장된 모든 기록을 삭제할까요?")){
+      localStorage.removeItem(STORAGE_RECORDS);
+      renderRecords();
+    }
   });
-}
+
+  if("serviceWorker" in navigator){
+    window.addEventListener("load",()=>{
+      navigator.serviceWorker.register("./sw.js").catch(()=>{});
+    });
+  }
+})();
 </script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 {
   "name": "TIME STOP",
   "short_name": "TIME STOP",
-  "description": "목표 시간에 맞춰 스톱워치를 멈추는 게임",
+  "description": "목표 시간에 맞춰 스톱워치를 멈추는 타이밍 게임",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
